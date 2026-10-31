@@ -18,6 +18,8 @@ components = [
     # "romi",
     # "sim",
     # "xrp",
+    ctre,
+    phoenix5
 ]
 
 # Other pip packages to install, such as vendor packages (each element
