@@ -18,10 +18,13 @@ components = [
     # "romi",
     # "sim",
     # "xrp",
-    ctre,
-    phoenix5
+    "phoenix5",
+    "rev",
+    "commands2"
 ]
 
 # Other pip packages to install, such as vendor packages (each element
 # is equivalent to a line in requirements.txt)
-requires = []
+requires = [
+    "robotpy-ctre"
+]

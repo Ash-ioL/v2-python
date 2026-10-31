@@ -4,17 +4,18 @@ from wpimath.kinematics import SwerveDrive4Kinematics, ChassisSpeeds
 import commands2
 from commands2.button import CommandXboxController
 import util.drive_deadband as db
-import phoenix5
+from phoenix5.sensors import WPI_PigeonIMU
 import constants
+from wpilib import SmartDashboard
 
 class Robot(wpilib.TimedRobot):
     def robotInit(self):
-        self.front_left_location = Translation2d();
-        self.front_right_location = Translation2d();
-        self.back_left_location = Translation2d();
-        self.back_right_location = Translation2d();
+        self.front_left_location = Translation2d()
+        self.front_right_location = Translation2d()
+        self.back_left_location = Translation2d()
+        self.back_right_location = Translation2d()
 
-        self.controller = CommandXboxController(0);
+        self.controller = CommandXboxController(0)
 
         self.kinematics = SwerveDrive4Kinematics(
             self.front_left_location,
@@ -23,7 +24,7 @@ class Robot(wpilib.TimedRobot):
             self.back_right_location,
         )
 
-        self.gryo = phoenix5.WPI_PigeonIMU(constants.pigeon_id)
+        self.gyro = WPI_PigeonIMU(constants.pigeon_id)
 
     def teleopPeriodic(self):
         x = self.controller.getLeftX()
@@ -49,4 +50,10 @@ class Robot(wpilib.TimedRobot):
         bl_states = module_states[2]
         br_states = module_states[3]
 
+        # fl_states = SwerveModuleState.optimize(fl_states, self.front_left.get_state().angle)
+        # fr_states = SwerveModuleState.optimize(fr_states, self.front_right.get_state().angle)
+        # bl_states = SwerveModuleState.optimize(bl_states, self.back_left.get_state().angle)
+        # br_states = SwerveModuleState.optimize(br_states, self.back_right.get_state().angle)
+
         # set states ot the swerve mdouels
+        SmartDashboard.putString("test", str(self.gyro.getYaw()))
