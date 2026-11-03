@@ -1,6 +1,7 @@
+import phoenix6
 import wpilib
 from wpimath.geometry import Translation2d;
-from wpimath.kinematics import SwerveDrive4Kinematics, ChassisSpeeds
+from wpimath.kinematics import SwerveDrive4Kinematics, ChassisSpeeds, SwerveModuleState
 import commands2
 from commands2.button import CommandXboxController
 import util.drive_deadband as db
@@ -24,7 +25,7 @@ class Robot(wpilib.TimedRobot):
             self.back_right_location,
         )
 
-        self.gyro = WPI_PigeonIMU(constants.pigeon_id)
+        self.gyro = WPI_PigeonIMU(constants.PIGEON_ID)
 
     def teleopPeriodic(self):
         x = self.controller.getLeftX()
@@ -55,5 +56,21 @@ class Robot(wpilib.TimedRobot):
         # bl_states = SwerveModuleState.optimize(bl_states, self.back_left.get_state().angle)
         # br_states = SwerveModuleState.optimize(br_states, self.back_right.get_state().angle)
 
+        
         # set states ot the swerve mdouels
         SmartDashboard.putString("test", str(self.gyro.getYaw()))
+
+        encoders = [
+            phoenix6.hardware.CANcoder(constants.SwerveModules.FrontLeft.ENCODER_ID),
+            phoenix6.hardware.CANcoder(constants.SwerveModules.FrontRight.ENCODER_ID),
+            phoenix6.hardware.CANcoder(constants.SwerveModules.BackLeft.ENCODER_ID),
+            phoenix6.hardware.CANcoder(constants.SwerveModules.BackRight.ENCODER_ID),
+        ]
+
+        for encoder in encoders:
+            config = phoenix6.configs.CANcoderConfiguration()
+            config.magnet_sensor.magnet_offset = 0.0
+            encoder.configurator.apply(config)
+
+    def robotPeriodic(self):
+        commands2.CommandScheduler.getInstance().run()

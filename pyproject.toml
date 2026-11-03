@@ -19,6 +19,7 @@ components = [
     # "sim",
     # "xrp",
     "phoenix5",
+    "phoenix6",
     "rev",
     "commands2"
 ]
