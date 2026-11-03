@@ -6,6 +6,7 @@ from commands2.button import CommandXboxController
 import util.drive_deadband as db
 from phoenix5.sensors import WPI_PigeonIMU
 import constants
+import phoenix6
 from wpilib import SmartDashboard
 
 class Robot(wpilib.TimedRobot):
@@ -25,6 +26,20 @@ class Robot(wpilib.TimedRobot):
         )
 
         self.gyro = WPI_PigeonIMU(constants.pigeon_id)
+
+        self.encoders = [
+            phoenix6.hardware.CANcoder(13),
+            phoenix6.hardware.CANcoder(23),
+            phoenix6.hardware.CANcoder(33),
+            phoenix6.hardware.CANcoder(43),
+        ]
+
+        # for encoder in self.encoders:
+        #     config = phoenix6.configs.CANcoderConfiguration()
+        #     config.magnet_sensor.magnet_offset = -1*encoder.get_absolute_position().value
+        #     encoder.configurator.apply(config)
+
+        
 
     def teleopPeriodic(self):
         x = self.controller.getLeftX()
@@ -57,3 +72,7 @@ class Robot(wpilib.TimedRobot):
 
         # set states ot the swerve mdouels
         SmartDashboard.putString("test", str(self.gyro.getYaw()))
+
+        SmartDashboard.putNumber("13 Encoder", self.encoders[0].get_absolute_position().value)
+
+        
