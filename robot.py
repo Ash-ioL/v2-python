@@ -1,3 +1,4 @@
+import math
 import phoenix6
 import wpilib
 from wpimath.geometry import Translation2d;
@@ -9,6 +10,7 @@ from phoenix5.sensors import WPI_PigeonIMU
 import constants
 import phoenix6
 from wpilib import SmartDashboard
+from subsystems.swerve_module import SwerveModule
 import rev
 
 class Robot(wpilib.TimedRobot):
@@ -54,6 +56,7 @@ class Robot(wpilib.TimedRobot):
         #     config.magnet_sensor.magnet_offset = -1*encoder.get_absolute_position().value
         #     encoder.configurator.apply(config)
 
+        self.fr_module = SwerveModule(31, 32, 33, 0, 0, 0)
         
 
     def teleopPeriodic(self):
@@ -103,8 +106,15 @@ class Robot(wpilib.TimedRobot):
 
         SmartDashboard.putNumber("13 Encoder", self.encoders[0].get_absolute_position().value)
 
-        _, drive_y = db.apply_deadband(0, self.controller.getLeftY())
-        self.motor.set(drive_y)
+        
+
+        drive_x, drive_y = db.apply_deadband(self.controller.getLeftX(), self.controller.getLeftY())
+
+        mag = math.hypot(drive_x, drive_y)
+        angle = math.atan2(drive_y, drive_x)
+
+        self.fr_module.set_drive(mag)
+        self.fr_module.set_steer(angle)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()

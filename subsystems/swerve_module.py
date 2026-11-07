@@ -1,5 +1,6 @@
 import rev
 import phoenix6
+from wpilib import SmartDashboard
 import wpimath.controller
 import math
 
@@ -10,8 +11,8 @@ class SwerveModule():
     # Steer ratio: 12.8:1
 
     def __init__(self, drive_motor, steer_motor, encoder, front, left, encoder_offset):
-        self.drive_motor = rev.SparkMax(drive_motor)
-        self.steer_motor = rev.SparkMax(steer_motor)
+        self.drive_motor = rev.SparkMax(drive_motor, rev.SparkMax.MotorType.kBrushless)
+        self.steer_motor = rev.SparkMax(steer_motor, rev.SparkMax.MotorType.kBrushless)
         self.encoder = phoenix6.hardware.CANcoder(encoder)
 
         self.front = front
@@ -26,7 +27,7 @@ class SwerveModule():
 
         config = rev.SparkMaxConfig()
         config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
-        
+
         self.steer_motor.configure(config, rev.ResetMode.kResetSafeParameters, rev.PersistMode.kPersistParameters)
         self.drive_motor.configure(config, rev.ResetMode.kResetSafeParameters, rev.PersistMode.kPersistParameters)
     
@@ -34,7 +35,9 @@ class SwerveModule():
         self.drive_motor.set(percent_speed)
     
     def set_steer(self, angle):
-        current_angle = self.encoder.get_absolute_position().value - self.encoder_offset
+        current_angle = self.encoder.get_absolute_position().value * math.pi - self.encoder_offset
+        SmartDashboard.putNumber("expected swerve angle", angle)
+        SmartDashboard.putNumber("current swerve angle", current_angle)
 
         motor_speed = self.pid.calculate(current_angle, angle)
 
