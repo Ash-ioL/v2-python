@@ -1,22 +1,19 @@
 import math
-
-deadband = 0.15
-max_speed = 3 # m/s
-max_rot = 2 # rps
+from constants import DEADBAND, MAX_SPEED, MAX_ROT
 
 def get_translation_velocities(x, y):
     x, y = apply_deadband(x, y)
-    vx = x * max_speed
-    vy = y * max_speed
+    vx = x * MAX_SPEED
+    vy = y * MAX_SPEED
     return vx, vy
 
 def get_rotation_velocities(x):
     x, _ = apply_deadband(x, 0)
-    return max_rot * x
+    return MAX_ROT * x
 
 def apply_deadband(x, y):
     h = math.hypot(x, y)
-    if h < deadband:
+    if h < DEADBAND:
         return 0, 0
     if h > 1:
         fac = 1 / h

@@ -11,6 +11,7 @@ import constants
 import phoenix6
 from wpilib import SmartDashboard
 from subsystems.swerve_module import SwerveModule
+from subsystems.swerve_subsystem import SwerveSubsystem
 import rev
 
 class Robot(wpilib.TimedRobot):
@@ -56,7 +57,50 @@ class Robot(wpilib.TimedRobot):
         #     config.magnet_sensor.magnet_offset = -1*encoder.get_absolute_position().value
         #     encoder.configurator.apply(config)
 
-        self.fr_module = SwerveModule(31, 32, 33, 0, 0, 0)
+        #self.br_module = SwerveModule(21, 22, 23, 0, 0, 0)
+
+        self.swerve_subsystem = SwerveSubsystem(
+            SwerveModule(
+                constants.SwerveModules.FrontLeft.DRIVE_ID,
+                constants.SwerveModules.FrontLeft.STEER_ID,
+                constants.SwerveModules.FrontLeft.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.FrontLeft.FRONT, 
+                    constants.SwerveModules.FrontLeft.LEFT
+                ),
+                constants.SwerveModules.FrontLeft.ENCODER_OFFSET
+            ),
+            SwerveModule(
+                constants.SwerveModules.FrontRight.DRIVE_ID,
+                constants.SwerveModules.FrontRight.STEER_ID,
+                constants.SwerveModules.FrontRight.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.FrontRight.FRONT, 
+                    constants.SwerveModules.FrontRight.LEFT
+                ),
+                constants.SwerveModules.FrontRight.ENCODER_OFFSET
+            ),
+            SwerveModule(
+                constants.SwerveModules.BackLeft.DRIVE_ID,
+                constants.SwerveModules.BackLeft.STEER_ID,
+                constants.SwerveModules.BackLeft.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.BackLeft.FRONT, 
+                    constants.SwerveModules.BackLeft.LEFT
+                ),
+                constants.SwerveModules.BackLeft.ENCODER_OFFSET
+            ),
+            SwerveModule(
+                constants.SwerveModules.BackRight.DRIVE_ID,
+                constants.SwerveModules.BackRight.STEER_ID,
+                constants.SwerveModules.BackRight.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.BackRight.FRONT, 
+                    constants.SwerveModules.BackRight.LEFT
+                ),
+                constants.SwerveModules.BackRight.ENCODER_OFFSET
+            )
+        )
         
 
     def teleopPeriodic(self):
@@ -67,6 +111,9 @@ class Robot(wpilib.TimedRobot):
 
         vx, vy = db.get_translation_velocities(x, y)
 
+        SmartDashboard.putNumber("vx", vx)
+        SmartDashboard.putNumber("vy", vy)
+
         omega = db.get_rotation_velocities(r_x)
 
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -76,12 +123,9 @@ class Robot(wpilib.TimedRobot):
 
         module_states = self.kinematics.toSwerveModuleStates(speeds)
 
-        self.kinematics.desaturateWheelSpeeds(module_states, db.max_speed)
+        self.kinematics.desaturateWheelSpeeds(module_states, constants.MAX_SPEED)
 
-        fl_states = module_states[0]
-        fr_states = module_states[1]
-        bl_states = module_states[2]
-        br_states = module_states[3]
+        self.swerve_subsystem.set_states(module_states)
 
         # fl_states = SwerveModuleState.optimize(fl_states, self.front_left.get_state().angle)
         # fr_states = SwerveModuleState.optimize(fr_states, self.front_right.get_state().angle)
@@ -106,15 +150,13 @@ class Robot(wpilib.TimedRobot):
 
         SmartDashboard.putNumber("13 Encoder", self.encoders[0].get_absolute_position().value)
 
-        
-
         drive_x, drive_y = db.apply_deadband(self.controller.getLeftX(), self.controller.getLeftY())
 
         mag = math.hypot(drive_x, drive_y)
         angle = math.atan2(drive_y, drive_x)
 
-        self.fr_module.set_drive(mag)
-        self.fr_module.set_steer(angle)
+        #self.br_module.set_drive(mag)
+        #self.br_module.set_steer(angle)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
