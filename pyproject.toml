@@ -28,5 +28,6 @@ components = [
 # is equivalent to a line in requirements.txt)
 requires = [
     "robotpy-ctre",
-    "phoenix6"
+    "phoenix6",
+    "robotpy-rev"
 ]

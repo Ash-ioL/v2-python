@@ -8,7 +8,7 @@ from phoenix5.sensors import WPI_PigeonIMU
 import constants
 import phoenix6
 from wpilib import SmartDashboard
-from rev import SparkMax, SparkLowLevel, SparkMaxConfig
+import rev
 
 class Robot(wpilib.TimedRobot):
     def robotInit(self):
@@ -36,12 +36,16 @@ class Robot(wpilib.TimedRobot):
         ]
 
 
-        self.config = SparkMaxConfig()
-        self.config.setIdleMode(SparkMaxConfig.IdleMode.kBrake)
-        self.motor = SparkMax(21, SparkLowLevel.MotorType.kBrushless)
+        self.motor = rev.SparkMax(21, rev.SparkMax.MotorType.kBrushless)
+
+        config = rev.SparkMaxConfig()
+
+        config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
+
         self.motor.configure(
-            self.config,
-            SparkMax.PersistantMode.kPersistParameters
+            config,
+            rev.ResetMode.kResetSafeParameters,
+            rev.PersistMode.kPersistParameters
         )
 
         # for encoder in self.encoders:
@@ -85,4 +89,5 @@ class Robot(wpilib.TimedRobot):
 
         SmartDashboard.putNumber("13 Encoder", self.encoders[0].get_absolute_position().value)
 
-        
+        _, drive_y = db.apply_deadband(0, self.controller.getLeftY())
+        self.motor.set(drive_y)
