@@ -7,7 +7,9 @@ from commands2.button import CommandXboxController
 import util.drive_deadband as db
 from phoenix5.sensors import WPI_PigeonIMU
 import constants
+import phoenix6
 from wpilib import SmartDashboard
+import rev
 
 class Robot(wpilib.TimedRobot):
     def robotInit(self):
@@ -26,6 +28,33 @@ class Robot(wpilib.TimedRobot):
         )
 
         self.gyro = WPI_PigeonIMU(constants.PIGEON_ID)
+
+        self.encoders = [
+            phoenix6.hardware.CANcoder(13),
+            phoenix6.hardware.CANcoder(23),
+            phoenix6.hardware.CANcoder(33),
+            phoenix6.hardware.CANcoder(43),
+        ]
+
+
+        # self.motor = rev.SparkMax(21, rev.SparkMax.MotorType.kBrushless)
+
+        # config = rev.SparkMaxConfig()
+
+        # config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
+
+        # self.motor.configure(
+        #     config,
+        #     rev.ResetMode.kResetSafeParameters,
+        #     rev.PersistMode.kPersistParameters
+        # )
+
+        # for encoder in self.encoders:
+        #     config = phoenix6.configs.CANcoderConfiguration()
+        #     config.magnet_sensor.magnet_offset = -1*encoder.get_absolute_position().value
+        #     encoder.configurator.apply(config)
+
+        
 
     def teleopPeriodic(self):
         x = self.controller.getLeftX()
@@ -60,17 +89,23 @@ class Robot(wpilib.TimedRobot):
         # set states ot the swerve mdouels
         SmartDashboard.putString("test", str(self.gyro.getYaw()))
 
-        encoders = [
-            phoenix6.hardware.CANcoder(constants.SwerveModules.FrontLeft.ENCODER_ID),
-            phoenix6.hardware.CANcoder(constants.SwerveModules.FrontRight.ENCODER_ID),
-            phoenix6.hardware.CANcoder(constants.SwerveModules.BackLeft.ENCODER_ID),
-            phoenix6.hardware.CANcoder(constants.SwerveModules.BackRight.ENCODER_ID),
-        ]
+        # encoders = [
+        #     phoenix6.hardware.CANcoder(constants.SwerveModules.FrontLeft.ENCODER_ID),
+        #     phoenix6.hardware.CANcoder(constants.SwerveModules.FrontRight.ENCODER_ID),
+        #     phoenix6.hardware.CANcoder(constants.SwerveModules.BackLeft.ENCODER_ID),
+        #     phoenix6.hardware.CANcoder(constants.SwerveModules.BackRight.ENCODER_ID),
+        # ]
 
-        for encoder in encoders:
-            config = phoenix6.configs.CANcoderConfiguration()
-            config.magnet_sensor.magnet_offset = 0.0
-            encoder.configurator.apply(config)
+        # for encoder in encoders:
+        #     config = phoenix6.configs.CANcoderConfiguration()
+        #     config.magnet_sensor.magnet_offset = 0.0
+        #     encoder.configurator.apply(config)
+
+        SmartDashboard.putNumber("13 Encoder", self.encoders[0].get_absolute_position().value)
+
+        _, drive_y = db.apply_deadband(0, self.controller.getLeftY())
+        self.motor.set(drive_y)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
+        
