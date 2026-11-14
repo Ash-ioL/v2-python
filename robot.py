@@ -40,17 +40,17 @@ class Robot(wpilib.TimedRobot):
         ]
 
 
-        # self.motor = rev.SparkMax(21, rev.SparkMax.MotorType.kBrushless)
+        self.motor = rev.SparkMax(32, rev.SparkMax.MotorType.kBrushless)
 
-        # config = rev.SparkMaxConfig()
+        config = rev.SparkMaxConfig()
 
-        # config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
+        config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
 
-        # self.motor.configure(
-        #     config,
-        #     rev.ResetMode.kResetSafeParameters,
-        #     rev.PersistMode.kPersistParameters
-        # )
+        self.motor.configure(   
+            config,
+            rev.ResetMode.kResetSafeParameters,
+            rev.PersistMode.kPersistParameters
+        )
 
         # for encoder in self.encoders:
         #     config = phoenix6.configs.CANcoderConfiguration()
@@ -59,48 +59,48 @@ class Robot(wpilib.TimedRobot):
 
         #self.br_module = SwerveModule(21, 22, 23, 0, 0, 0)
 
-        self.swerve_subsystem = SwerveSubsystem(
-            SwerveModule(
-                constants.SwerveModules.FrontLeft.DRIVE_ID,
-                constants.SwerveModules.FrontLeft.STEER_ID,
-                constants.SwerveModules.FrontLeft.ENCODER_ID,
-                Translation2d(
-                    constants.SwerveModules.FrontLeft.FRONT, 
-                    constants.SwerveModules.FrontLeft.LEFT
-                ),
-                constants.SwerveModules.FrontLeft.ENCODER_OFFSET
-            ),
-            SwerveModule(
-                constants.SwerveModules.FrontRight.DRIVE_ID,
-                constants.SwerveModules.FrontRight.STEER_ID,
-                constants.SwerveModules.FrontRight.ENCODER_ID,
-                Translation2d(
-                    constants.SwerveModules.FrontRight.FRONT, 
-                    constants.SwerveModules.FrontRight.LEFT
-                ),
-                constants.SwerveModules.FrontRight.ENCODER_OFFSET
-            ),
-            SwerveModule(
-                constants.SwerveModules.BackLeft.DRIVE_ID,
-                constants.SwerveModules.BackLeft.STEER_ID,
-                constants.SwerveModules.BackLeft.ENCODER_ID,
-                Translation2d(
-                    constants.SwerveModules.BackLeft.FRONT, 
-                    constants.SwerveModules.BackLeft.LEFT
-                ),
-                constants.SwerveModules.BackLeft.ENCODER_OFFSET
-            ),
-            SwerveModule(
-                constants.SwerveModules.BackRight.DRIVE_ID,
-                constants.SwerveModules.BackRight.STEER_ID,
-                constants.SwerveModules.BackRight.ENCODER_ID,
-                Translation2d(
-                    constants.SwerveModules.BackRight.FRONT, 
-                    constants.SwerveModules.BackRight.LEFT
-                ),
-                constants.SwerveModules.BackRight.ENCODER_OFFSET
-            )
-        )
+        # self.swerve_subsystem = SwerveSubsystem(
+        #     SwerveModule(
+        #         constants.SwerveModules.FrontLeft.DRIVE_ID,
+        #         constants.SwerveModules.FrontLeft.STEER_ID,
+        #         constants.SwerveModules.FrontLeft.ENCODER_ID,
+        #         Translation2d(
+        #             constants.SwerveModules.FrontLeft.FRONT, 
+        #             constants.SwerveModules.FrontLeft.LEFT
+        #         ),
+        #         constants.SwerveModules.FrontLeft.ENCODER_OFFSET
+        #     ),
+        #     SwerveModule(
+        #         constants.SwerveModules.FrontRight.DRIVE_ID,
+        #         constants.SwerveModules.FrontRight.STEER_ID,
+        #         constants.SwerveModules.FrontRight.ENCODER_ID,
+        #         Translation2d(
+        #             constants.SwerveModules.FrontRight.FRONT, 
+        #             constants.SwerveModules.FrontRight.LEFT
+        #         ),
+        #         constants.SwerveModules.FrontRight.ENCODER_OFFSET
+        #     ),
+        #     SwerveModule(
+        #         constants.SwerveModules.BackLeft.DRIVE_ID,
+        #         constants.SwerveModules.BackLeft.STEER_ID,
+        #         constants.SwerveModules.BackLeft.ENCODER_ID,
+        #         Translation2d(
+        #             constants.SwerveModules.BackLeft.FRONT, 
+        #             constants.SwerveModules.BackLeft.LEFT
+        #         ),
+        #         constants.SwerveModules.BackLeft.ENCODER_OFFSET
+        #     ),
+        #     SwerveModule(
+        #         constants.SwerveModules.BackRight.DRIVE_ID,
+        #         constants.SwerveModules.BackRight.STEER_ID,
+        #         constants.SwerveModules.BackRight.ENCODER_ID,
+        #         Translation2d(
+        #             constants.SwerveModules.BackRight.FRONT, 
+        #             constants.SwerveModules.BackRight.LEFT
+        #         ),
+        #         constants.SwerveModules.BackRight.ENCODER_OFFSET
+        #     )
+        # )
         
 
     def teleopPeriodic(self):
@@ -125,7 +125,7 @@ class Robot(wpilib.TimedRobot):
 
         self.kinematics.desaturateWheelSpeeds(module_states, constants.MAX_SPEED)
 
-        self.swerve_subsystem.set_states(module_states)
+        # self.swerve_subsystem.set_states(module_states)
 
         # fl_states = SwerveModuleState.optimize(fl_states, self.front_left.get_state().angle)
         # fr_states = SwerveModuleState.optimize(fr_states, self.front_right.get_state().angle)
@@ -155,8 +155,12 @@ class Robot(wpilib.TimedRobot):
         mag = math.hypot(drive_x, drive_y)
         angle = math.atan2(drive_y, drive_x)
 
+        self.motor.set(0.2)
+
         #self.br_module.set_drive(mag)
         #self.br_module.set_steer(angle)
+
+
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()

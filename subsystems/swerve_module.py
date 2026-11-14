@@ -64,10 +64,10 @@ class SwerveModule():
 
     
     def set_drive(self, vel):
-        vel = min(vel, constants.MAX_SPEED)
+        vel = max(-constants.MAX_SPEED, min(vel, constants.MAX_SPEED))
         rpm = (vel * 60 * constants.SwerveModules.DRIVE_RATIO) / (constants.SwerveModules.WHEEL_RADIUS * 2 * math.pi)
 
-        self.drive_pid.setReference(rpm, rev.SparkMaxControlType.kVelocity)
+        self.drive_pid.setReference(rpm, rev.SparkLowLevel.ControlType.kVelocity)
     
     def set_steer(self, angle):
         angle = Rotation2d(angle).radians()
@@ -76,12 +76,13 @@ class SwerveModule():
         SmartDashboard.putNumber("current swerve angle", current_angle)
 
         output = self.steer_pid.calculate(current_angle, angle)
-        output = min(1, output)
+        output = max(-1, min(1, output))
         self.steer_motor.set(output)
     
     def set_state(self, state):
         if state is None:
             return
+        state.optimize(Rotation2d(self.get_steer_angle()))
         self.set_drive(state.speed)
         self.set_steer(state.angle.radians())
 

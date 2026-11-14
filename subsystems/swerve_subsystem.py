@@ -58,7 +58,6 @@ class SwerveSubsystem(commands2.SubsystemBase):
     def set_states(self, module_states):
         for i in range(len(module_states)):
             state = module_states[i]
-            state = SwerveModuleState.optimize(state, Rotation2d(self.modules[i].get_steer_angle()))
 
             module = self.modules[i]
             module.set_state(state)
