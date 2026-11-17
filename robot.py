@@ -16,41 +16,41 @@ import rev
 
 class Robot(wpilib.TimedRobot):
     def robotInit(self):
-        self.front_left_location = Translation2d()
-        self.front_right_location = Translation2d()
-        self.back_left_location = Translation2d()
-        self.back_right_location = Translation2d()
+        # self.front_left_location = Translation2d()
+        # self.front_right_location = Translation2d()
+        # self.back_left_location = Translation2d()
+        # self.back_right_location = Translation2d()
 
         self.controller = CommandXboxController(0)
 
-        self.kinematics = SwerveDrive4Kinematics(
-            self.front_left_location,
-            self.front_right_location,
-            self.back_left_location,
-            self.back_right_location,
-        )
+        # self.kinematics = SwerveDrive4Kinematics(
+        #     self.front_left_location,
+        #     self.front_right_location,
+        #     self.back_left_location,
+        #     self.back_right_location,
+        # )
 
-        self.gyro = WPI_PigeonIMU(constants.PIGEON_ID)
+        # self.gyro = WPI_PigeonIMU(constants.PIGEON_ID)
 
-        self.encoders = [
-            phoenix6.hardware.CANcoder(13),
-            phoenix6.hardware.CANcoder(23),
-            phoenix6.hardware.CANcoder(33),
-            phoenix6.hardware.CANcoder(43),
-        ]
+        # self.encoders = [
+        #     phoenix6.hardware.CANcoder(43),
+        #     phoenix6.hardware.CANcoder(33),
+        #     phoenix6.hardware.CANcoder(13),
+        #     phoenix6.hardware.CANcoder(23),
+        # ]
 
 
-        self.motor = rev.SparkMax(32, rev.SparkMax.MotorType.kBrushless)
+        # self.motor = rev.SparkMax(32, rev.SparkMax.MotorType.kBrushless)
 
-        config = rev.SparkMaxConfig()
+        # config = rev.SparkMaxConfig()
 
-        config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
+        # config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
 
-        self.motor.configure(   
-            config,
-            rev.ResetMode.kResetSafeParameters,
-            rev.PersistMode.kPersistParameters
-        )
+        # self.motor.configure(   
+        #     config,
+        #     rev.ResetMode.kResetSafeParameters,
+        #     rev.PersistMode.kPersistParameters
+        # )
 
         # for encoder in self.encoders:
         #     config = phoenix6.configs.CANcoderConfiguration()
@@ -59,48 +59,49 @@ class Robot(wpilib.TimedRobot):
 
         #self.br_module = SwerveModule(21, 22, 23, 0, 0, 0)
 
-        # self.swerve_subsystem = SwerveSubsystem(
-        #     SwerveModule(
-        #         constants.SwerveModules.FrontLeft.DRIVE_ID,
-        #         constants.SwerveModules.FrontLeft.STEER_ID,
-        #         constants.SwerveModules.FrontLeft.ENCODER_ID,
-        #         Translation2d(
-        #             constants.SwerveModules.FrontLeft.FRONT, 
-        #             constants.SwerveModules.FrontLeft.LEFT
-        #         ),
-        #         constants.SwerveModules.FrontLeft.ENCODER_OFFSET
-        #     ),
-        #     SwerveModule(
-        #         constants.SwerveModules.FrontRight.DRIVE_ID,
-        #         constants.SwerveModules.FrontRight.STEER_ID,
-        #         constants.SwerveModules.FrontRight.ENCODER_ID,
-        #         Translation2d(
-        #             constants.SwerveModules.FrontRight.FRONT, 
-        #             constants.SwerveModules.FrontRight.LEFT
-        #         ),
-        #         constants.SwerveModules.FrontRight.ENCODER_OFFSET
-        #     ),
-        #     SwerveModule(
-        #         constants.SwerveModules.BackLeft.DRIVE_ID,
-        #         constants.SwerveModules.BackLeft.STEER_ID,
-        #         constants.SwerveModules.BackLeft.ENCODER_ID,
-        #         Translation2d(
-        #             constants.SwerveModules.BackLeft.FRONT, 
-        #             constants.SwerveModules.BackLeft.LEFT
-        #         ),
-        #         constants.SwerveModules.BackLeft.ENCODER_OFFSET
-        #     ),
-        #     SwerveModule(
-        #         constants.SwerveModules.BackRight.DRIVE_ID,
-        #         constants.SwerveModules.BackRight.STEER_ID,
-        #         constants.SwerveModules.BackRight.ENCODER_ID,
-        #         Translation2d(
-        #             constants.SwerveModules.BackRight.FRONT, 
-        #             constants.SwerveModules.BackRight.LEFT
-        #         ),
-        #         constants.SwerveModules.BackRight.ENCODER_OFFSET
-        #     )
-        # )
+        self.swerve_subsystem = SwerveSubsystem(
+            SwerveModule(
+                constants.SwerveModules.FrontLeft.DRIVE_ID,
+                constants.SwerveModules.FrontLeft.STEER_ID,
+                constants.SwerveModules.FrontLeft.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.FrontLeft.FRONT, 
+                    constants.SwerveModules.FrontLeft.LEFT
+                ),
+                constants.SwerveModules.FrontLeft.ENCODER_OFFSET
+            ),
+            SwerveModule(
+                constants.SwerveModules.FrontRight.DRIVE_ID,
+                constants.SwerveModules.FrontRight.STEER_ID,
+                constants.SwerveModules.FrontRight.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.FrontRight.FRONT, 
+                    constants.SwerveModules.FrontRight.LEFT
+                ),
+                constants.SwerveModules.FrontRight.ENCODER_OFFSET
+            ),
+            SwerveModule(
+                constants.SwerveModules.BackLeft.DRIVE_ID,
+                constants.SwerveModules.BackLeft.STEER_ID,
+                constants.SwerveModules.BackLeft.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.BackLeft.FRONT, 
+                    constants.SwerveModules.BackLeft.LEFT
+                ),
+                constants.SwerveModules.BackLeft.ENCODER_OFFSET
+            ),
+            SwerveModule(
+                constants.SwerveModules.BackRight.DRIVE_ID,
+                constants.SwerveModules.BackRight.STEER_ID,
+                constants.SwerveModules.BackRight.ENCODER_ID,
+                Translation2d(
+                    constants.SwerveModules.BackRight.FRONT, 
+                    constants.SwerveModules.BackRight.LEFT
+                ),
+                constants.SwerveModules.BackRight.ENCODER_OFFSET
+            ),
+            WPI_PigeonIMU(constants.PIGEON_ID)
+        )
         
 
     def teleopPeriodic(self):
@@ -116,16 +117,9 @@ class Robot(wpilib.TimedRobot):
 
         omega = db.get_rotation_velocities(r_x)
 
-        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            vx, vy, omega,
-            self.gyro.getRotation2d()
-        )
+        
 
-        module_states = self.kinematics.toSwerveModuleStates(speeds)
-
-        self.kinematics.desaturateWheelSpeeds(module_states, constants.MAX_SPEED)
-
-        # self.swerve_subsystem.set_states(module_states)
+        self.swerve_subsystem.set_states(vx, vy, omega)
 
         # fl_states = SwerveModuleState.optimize(fl_states, self.front_left.get_state().angle)
         # fr_states = SwerveModuleState.optimize(fr_states, self.front_right.get_state().angle)
@@ -134,28 +128,19 @@ class Robot(wpilib.TimedRobot):
 
         
         # set states ot the swerve mdouels
-        SmartDashboard.putString("test", str(self.gyro.getYaw()))
-
-        # encoders = [
-        #     phoenix6.hardware.CANcoder(constants.SwerveModules.FrontLeft.ENCODER_ID),
-        #     phoenix6.hardware.CANcoder(constants.SwerveModules.FrontRight.ENCODER_ID),
-        #     phoenix6.hardware.CANcoder(constants.SwerveModules.BackLeft.ENCODER_ID),
-        #     phoenix6.hardware.CANcoder(constants.SwerveModules.BackRight.ENCODER_ID),
-        # ]
+        
 
         # for encoder in encoders:
         #     config = phoenix6.configs.CANcoderConfiguration()
         #     config.magnet_sensor.magnet_offset = 0.0
         #     encoder.configurator.apply(config)
 
-        SmartDashboard.putNumber("13 Encoder", self.encoders[0].get_absolute_position().value)
+        # drive_x, drive_y = db.apply_deadband(self.controller.getLeftX(), self.controller.getLeftY())
 
-        drive_x, drive_y = db.apply_deadband(self.controller.getLeftX(), self.controller.getLeftY())
+        # mag = math.hypot(drive_x, drive_y)
+        # angle = math.atan2(drive_y, drive_x)
 
-        mag = math.hypot(drive_x, drive_y)
-        angle = math.atan2(drive_y, drive_x)
-
-        self.motor.set(0.2)
+        # self.motor.set(0.2)
 
         #self.br_module.set_drive(mag)
         #self.br_module.set_steer(angle)
@@ -163,5 +148,10 @@ class Robot(wpilib.TimedRobot):
 
 
     def robotPeriodic(self):
-        commands2.CommandScheduler.getInstance().run()
-        
+        ...
+        # commands2.CommandScheduler.getInstance().run()
+        # SmartDashboard.putNumber("cancoder readings/fl", self.encoders[0].get_absolute_position().value)
+        # SmartDashboard.putNumber("cancoder readings/fr", self.encoders[1].get_absolute_position().value)
+        # SmartDashboard.putNumber("cancoder readings/bl", self.encoders[2].get_absolute_position().value)
+        # SmartDashboard.putNumber("cancoder readings/br", self.encoders[3].get_absolute_position().value)
+        # SmartDashboard.putString("gryo reading", str(self.gyro.getYaw()))
