@@ -14,7 +14,7 @@ from subsystems.swerve_module import SwerveModule
 from subsystems.swerve_subsystem import SwerveSubsystem
 import rev
 
-class Robot(wpilib.TimedRobot):
+class Robot(commands2.TimedCommandRobot):
     def robotInit(self):
         # self.front_left_location = Translation2d()
         # self.front_right_location = Translation2d()
@@ -68,7 +68,8 @@ class Robot(wpilib.TimedRobot):
                     constants.SwerveModules.FrontLeft.FRONT, 
                     constants.SwerveModules.FrontLeft.LEFT
                 ),
-                constants.SwerveModules.FrontLeft.ENCODER_OFFSET
+                constants.SwerveModules.FrontLeft.ENCODER_OFFSET,
+                "fl_module"
             ),
             SwerveModule(
                 constants.SwerveModules.FrontRight.DRIVE_ID,
@@ -78,7 +79,8 @@ class Robot(wpilib.TimedRobot):
                     constants.SwerveModules.FrontRight.FRONT, 
                     constants.SwerveModules.FrontRight.LEFT
                 ),
-                constants.SwerveModules.FrontRight.ENCODER_OFFSET
+                constants.SwerveModules.FrontRight.ENCODER_OFFSET,
+                "fr_module"
             ),
             SwerveModule(
                 constants.SwerveModules.BackLeft.DRIVE_ID,
@@ -88,7 +90,8 @@ class Robot(wpilib.TimedRobot):
                     constants.SwerveModules.BackLeft.FRONT, 
                     constants.SwerveModules.BackLeft.LEFT
                 ),
-                constants.SwerveModules.BackLeft.ENCODER_OFFSET
+                constants.SwerveModules.BackLeft.ENCODER_OFFSET,
+                "bl_module"
             ),
             SwerveModule(
                 constants.SwerveModules.BackRight.DRIVE_ID,
@@ -98,7 +101,8 @@ class Robot(wpilib.TimedRobot):
                     constants.SwerveModules.BackRight.FRONT, 
                     constants.SwerveModules.BackRight.LEFT
                 ),
-                constants.SwerveModules.BackRight.ENCODER_OFFSET
+                constants.SwerveModules.BackRight.ENCODER_OFFSET,
+                "br_module"
             ),
             WPI_PigeonIMU(constants.PIGEON_ID)
         )
@@ -119,7 +123,8 @@ class Robot(wpilib.TimedRobot):
 
         
 
-        self.swerve_subsystem.set_states(vx, vy, omega)
+        # self.swerve_subsystem.set_states(vx, vy, omega)
+        self.swerve_subsystem.run_all()
 
         # fl_states = SwerveModuleState.optimize(fl_states, self.front_left.get_state().angle)
         # fr_states = SwerveModuleState.optimize(fr_states, self.front_right.get_state().angle)

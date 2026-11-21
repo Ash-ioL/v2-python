@@ -23,12 +23,13 @@ import commands2
 
 class SwerveSubsystem(commands2.SubsystemBase):
     def __init__(self, front_left, front_right, back_left, back_right, gyro: WPI_PigeonIMU):
+        self.inc = 0
         super().__init__()
         
-        self.fl_module = front_left
-        self.fr_module = front_right
-        self.bl_module = back_left
-        self.br_module = back_right
+        self.fl_module: SwerveModule = front_left
+        self.fr_module: SwerveModule = front_right
+        self.bl_module: SwerveModule = back_left
+        self.br_module: SwerveModule = back_right
 
         self.modules = [
             self.fl_module,
@@ -67,5 +68,16 @@ class SwerveSubsystem(commands2.SubsystemBase):
 
             module = self.modules[i]
             module.set_state(state)
+    
+    def run_all(self):
+        for module in self.modules:
+            module.run_light()
 
-        
+    def periodic(self):
+        self.fl_module.log_module()
+        self.fr_module.log_module()
+        self.bl_module.log_module()
+        self.br_module.log_module()
+        SmartDashboard.putNumber("swerve/yaw", self.gyro.getYaw())
+        SmartDashboard.putNumber("random", self.inc)
+        self.inc += 0.001

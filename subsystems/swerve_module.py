@@ -25,7 +25,11 @@ class SwerveModule():
     # Drive ratio: 8.14:1
     # Steer ratio: 12.8:1
 
-    def __init__(self, drive_motor, steer_motor, encoder, offset, encoder_offset):
+    def __init__(self, drive_motor, steer_motor, encoder, offset, encoder_offset, name: str = "unnammed_module"):
+        self.prev_state: SwerveModuleState = None
+        self.name: str = name
+        self.log_init()
+
         self.drive_motor = rev.SparkMax(drive_motor, rev.SparkMax.MotorType.kBrushless)
         self.steer_motor = rev.SparkMax(steer_motor, rev.SparkMax.MotorType.kBrushless)
         self.encoder = phoenix6.hardware.CANcoder(encoder)
@@ -35,10 +39,10 @@ class SwerveModule():
         self.offset = offset
         self.encoder_offset = encoder_offset
 
-        kp = 0.1
-        kd = 0.001
+        kp = 0.0001
+        kd = 0.0001
 
-        self.steer_pid = wpimath.controller.PIDController(kp, 0.0, kd)
+        self.steer_pid = wpimath.controller.PIDController(kp, 0.0, 0)
         self.steer_pid.enableContinuousInput(-math.pi, math.pi)
 
         self.drive_pid = self.drive_motor.getClosedLoopController()
@@ -53,7 +57,7 @@ class SwerveModule():
         # steer_config.closedLoop.P(2.5)
         steer_config.setIdleMode(rev.SparkBaseConfig.IdleMode.kBrake)
 
-        drive_config.closedLoop.P(0.1)
+        drive_config.closedLoop.P(0.000000000001)
         drive_config.closedLoop.I(0.0)
         drive_config.closedLoop.D(0.0)
         drive_config.closedLoop.velocityFF(0.2)
@@ -62,12 +66,21 @@ class SwerveModule():
         self.steer_motor.configure(steer_config, rev.ResetMode.kResetSafeParameters, rev.PersistMode.kPersistParameters)
         self.drive_motor.configure(drive_config, rev.ResetMode.kResetSafeParameters, rev.PersistMode.kPersistParameters)
 
+    def log_init(self):
+        name = self.name
+        SmartDashboard.putNumber(name+"/current/angle", -1)
+        SmartDashboard.putNumber(name+"/current/rpm", -1)
+        SmartDashboard.putNumber(name+"/desired/vel", -1)
+        SmartDashboard.putNumber(name+"/desired/angle", -1)
     
     def set_drive(self, vel):
         vel = max(-constants.MAX_SPEED, min(vel, constants.MAX_SPEED))
         rpm = (vel * 60 * constants.SwerveModules.DRIVE_RATIO) / (constants.SwerveModules.WHEEL_RADIUS * 2 * math.pi)
 
         self.drive_pid.setReference(rpm, rev.SparkLowLevel.ControlType.kVelocity)
+    
+    def run_light(self):
+        self.drive_motor.set(0.01)
     
     def set_steer(self, angle):
         angle = Rotation2d(angle).radians()
@@ -86,6 +99,7 @@ class SwerveModule():
         self.set_drive(state.speed)
         self.set_steer(state.angle.radians())
 
+
     def get_offset(self):
         return self.offset
     
@@ -97,3 +111,12 @@ class SwerveModule():
 
     def get_state(self):
         return SwerveModuleState(self.get_speed(), wpimath.geometry.Rotation2d(self.get_steer_angle()))
+    
+    def log_module(self, name = None):
+        if not name:
+            name = self.name
+        SmartDashboard.putNumber("swerve/"+name+"/current/angle", self.encoder.get_absolute_position().value)
+        SmartDashboard.putNumber("swerve/"+name+"/current/rpm", float(self.drive_motor.getEncoder().getVelocity()))
+        if self.prev_state:
+            SmartDashboard.putNumber("swerve/"+name+"/desired/vel", float(self.prev_state.angle.degrees()))
+            SmartDashboard.putNumber("swerve/"+name+"/desired/angle", float(self.prev_state.speed))
